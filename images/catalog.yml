@@ -1,0 +1,5 @@
+kepler:
+  optical: kepler_opt.fits
+  infrared: kepler_ir.fits
+  xray_low_energy: kepler_xray_le.fits
+  xray_high_energy: kepler_xray_he.fits
