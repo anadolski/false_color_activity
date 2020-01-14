@@ -4,6 +4,6 @@ matplotlib
 pillow
 pyregion
 pyavm
+pyyaml
 astropy
-aplpy
 montage-wrapper
