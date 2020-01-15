@@ -3,3 +3,13 @@ kepler:
   infrared: kepler_ir.fits
   xray_low_energy: kepler_xray_le.fits
   xray_high_energy: kepler_xray_he.fits
+whirlpool_galaxy:
+  optical_red: m51_optical_R.fits
+  optical_blue: m51_optical_B.fits
+  optical_green: m51_optical_G.fits
+  xray: m51_xray.fits
+cats_eye_nebula:
+  optical_red: ngc6543_optical_R.fits
+  optical_blue: ngc6543_optical_B.fits
+  optical_green: ngc6543_optical_G.fits
+  xray: ngc6543_xray.fits
