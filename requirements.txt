@@ -1,9 +1,5 @@
 numpy
 scipy
 matplotlib
-pillow
-pyregion
-pyavm
 pyyaml
 astropy
-montage-wrapper
