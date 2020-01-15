@@ -13,3 +13,10 @@ cats_eye_nebula:
   optical_blue: ngc6543_optical_B.fits
   optical_green: ngc6543_optical_G.fits
   xray: ngc6543_xray.fits
+m106:
+  xray: https://chandra.harvard.edu/photo/2014/m106/fits/m106_xray.fits
+  optical_blue: https://chandra.harvard.edu/photo/2014/m106/fits/m106_optical_B.fits
+  optical_green: https://chandra.harvard.edu/photo/2014/m106/fits/m106_optical_G.fits
+  optical_red: https://chandra.harvard.edu/photo/2014/m106/fits/m106_optical_R.fits
+  infrared: https://chandra.harvard.edu/photo/2014/m106/fits/m106_ir.fits
+  radio: https://chandra.harvard.edu/photo/2014/m106/fits/m106_radio.fits

@@ -59,10 +59,10 @@ def get_image_widget():
     w = interactive(wrapper,
                     object_name=widgets.Dropdown(
                         options=catalog.objects, value=catalog.objects[0],
-                        description='Astronomical Object:', disabled=False),
+                        description='Object', disabled=False),
                     figwidth=widgets.BoundedFloatText(
                         value=10, min=1, max=15,
-                        description='Figure width'),
+                        description='Width (cm)'),
                     fullres=widgets.Checkbox(value=False, description='Display full resolution (slow)'))
     w_control = widgets.VBox([w, w_layers], layout=widgets.Layout(width='50%'))
     w_all = widgets.HBox([w_control, w_out])
