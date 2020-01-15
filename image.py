@@ -135,12 +135,12 @@ class Image(object):
             self.shape = new_layer.shape
         self.layers.append(new_layer)
 
-    def plot(self, fullres=False, size=None, ax=None):
+    def plot(self, fullres=False, size=None, ax=None, figsize=(6, 6)):
         if self.shape is None:
             return
         if ax is None:
             plt.clf()
-            f = plt.figure(figsize=(6, 6))
+            f = plt.figure(figsize=figsize)
             ax = f.add_subplot()
         else:
             ax.clear()

@@ -28,7 +28,7 @@ def get_layer_widget(layer, plot_function=None):
 def get_image_widget():
     w_out = widgets.Output(layout=widgets.Layout(width='50%'))
     w_layers = widgets.Accordion()
-    def wrapper(object_name, fullres=False):
+    def wrapper(object_name, figwidth=10, fullres=False):
         obj = Image(object_name, catalog=catalog)
         obj.widget_setup_complete = False
         def plot_function():
@@ -36,7 +36,8 @@ def get_image_widget():
                 return
             w_out.clear_output()
             with w_out:
-                obj.plot(fullres=fullres)
+                obj.plot(fullres=fullres,
+                         figsize=(figwidth, figwidth))
         w_clr = []
         extra_colors = ['magenta', 'cyan', 'yellow']
         if 'optical_red' not in obj.bands:
@@ -51,18 +52,17 @@ def get_image_widget():
             obj.append_layer(new_layer)
             w_clr.append(get_layer_widget(new_layer, plot_function=plot_function))
         w_layers.children = w_clr
-        # w_clr = widgets.Accordion(children=w_clr,
-        #                           layout=widgets.Layout(width='50%'))
         for i, band in enumerate(obj.bands):
             w_layers.set_title(i, band)
-        # w_box = widgets.HBox([w_layers, w_out])
-        # display(w_box)
         obj.widget_setup_complete = True
         plot_function()
     w = interactive(wrapper,
                     object_name=widgets.Dropdown(
                         options=catalog.objects, value=catalog.objects[0],
                         description='Astronomical Object:', disabled=False),
+                    figwidth=widgets.BoundedFloatText(
+                        value=10, min=1, max=15,
+                        description='Figure width'),
                     fullres=widgets.Checkbox(value=False, description='Display full resolution (slow)'))
     w_control = widgets.VBox([w, w_layers], layout=widgets.Layout(width='50%'))
     w_all = widgets.HBox([w_control, w_out])
