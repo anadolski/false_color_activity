@@ -135,7 +135,7 @@ class Image(object):
             self.shape = new_layer.shape
         self.layers.append(new_layer)
 
-    def plot(self, fullres=False, size=None, ax=None, figsize=(6, 6)):
+    def plot(self, fullres=False, size=None, ax=None, figsize=(10, 10)):
         if self.shape is None:
             return
         if ax is None:
