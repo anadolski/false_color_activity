@@ -19,7 +19,7 @@ def get_layer_widget(layer, plot_function=None):
                                 description='Opacity', readout=True)
     logscale = widgets.Checkbox(value=False, description='Logarithmic scaling')
     def wrapper(**kwargs):
-        layer.update(object_name=layer.object, band=layer.band, **kwargs)
+        layer.update(object_name=layer.object, filter_name=layer.filter, **kwargs)
         if (plot_function is not None) and (not skip_layer_plot):
             plot_function()
     w = interactive(wrapper, color=color, alpha=alpha, logscale=logscale)
@@ -53,20 +53,21 @@ def get_image_widget():
         w_clr = []
         extra_colors = ['magenta', 'cyan', 'yellow', 'orange',
                         'purple', 'pink', 'turquoise', 'lavender']
-        if 'optical_red' not in obj.bands:
+        if 'optical_red' not in obj.filters:
             extra_colors = obj.default_colors + extra_colors
-        for band in obj.bands:
-            if band.split('optical_')[-1] in obj.default_colors:
-                clr = band.split('optical_')[-1]
+        for x in obj.filters:
+            if x.split('optical_')[-1] in obj.default_colors:
+                clr = x.split('optical_')[-1]
             else:
                 clr = extra_colors.pop(0)
-            new_layer = ImageLayer(obj.catalog, object_name=obj.object,
-                                   band=band, color=clr)
+            new_layer = ImageLayer(object_name=obj.object,
+                                   filter_name=x, color=clr,
+                                   catalog=obj.catalog)
             obj.append_layer(new_layer)
             w_clr.append(get_layer_widget(new_layer, plot_function=plot_function))
         w_layers.children = w_clr
-        for i, band in enumerate(obj.bands):
-            w_layers.set_title(i, band)
+        for i, x in enumerate(obj.filters):
+            w_layers.set_title(i, x)
         obj.widget_setup_complete = True
         plot_function()
     object_list = catalog.local_objects + ['*' + x for x in catalog.remote_objects]

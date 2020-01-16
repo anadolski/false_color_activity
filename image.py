@@ -30,10 +30,12 @@ def downsample_size(orig_size, size):
 
 
 class ImageLayer(object):
-    def __init__(self, catalog, *args, **kwargs):
-        self.catalog = catalog
+    def __init__(self, *args, **kwargs):
+        self.catalog = kwargs.pop('catalog', None)
+        if self.catalog is None:
+            self.catalog = Catalog(os.path.join("data", "catalog.yml"))
         self.object = None
-        self.band = None
+        self.filter = None
         self.fname = None
         self.image_data = None
         self.shape = None
@@ -47,15 +49,15 @@ class ImageLayer(object):
         self.min_color = (0, 0, 0, 0)
         self.update(*args, **kwargs)
 
-    def update(self, object_name=None, band=None, fname=None,
+    def update(self, object_name=None, filter_name=None, fname=None,
                color='white', alpha=1.0, logscale=False,
                vmin=None, vmax=None, min_color=(0, 0, 0, 0)):
         new_data = False
-        if (fname, object_name, band) != (self.fname, self.object, self.band):
+        if (fname, object_name, filter_name) != (self.fname, self.object, self.filter):
             self.object = object_name
-            self.band = band
+            self.filter = filter_name
             self.fname = fname
-            self.image_data = self.catalog.load_data(self.object, self.band, fname=self.fname)
+            self.image_data = self.catalog.load_data(self.object, self.filter, fname=self.fname)
             self.shape = self.image_data.shape
             new_data = True
         self.alpha = alpha
@@ -84,11 +86,15 @@ class ImageLayer(object):
         return self.smap.to_rgba(self.get_image_data(size=size),
                                  alpha=self.alpha)
     
-    def plot(self, size=None, ax=None):
+    def plot(self, size=None, ax=None, new_figure=False, figsize=None):
+        if new_figure:
+            new_figure = plt.figure(figsize=figsize)
         if ax is None:
             ax = plt
-        return ax.imshow(self.get_image_data(size=size), alpha=self.alpha,
-                         norm=self.norm, cmap=self.cmap, origin='lower')
+        out = ax.imshow(self.get_image_data(size=size), alpha=self.alpha,
+                        norm=self.norm, cmap=self.cmap, origin='lower')
+        ax.axis("off")
+        return out
 
     def get_color_data(self, size=None):
         return self.norm(self.get_image_data(size=size))
@@ -118,14 +124,15 @@ class Image(object):
         self.image = None
         
     @property
-    def bands(self):
-        return self.catalog.get_bands(self.object)
+    def filters(self):
+        return self.catalog.get_filters(self.object)
 
-    def add_layer(self, band, color=None, **kwargs):
+    def add_layer(self, filter_name, color=None, **kwargs):
         if color is None:
             color = self.default_colors[len(self.layers) % len(self.default_colors)]
-        new_layer = ImageLayer(self.catalog, object_name=self.object,
-                               band=band, color=color, **kwargs)
+        new_layer = ImageLayer(object_name=self.object,
+                               filter_name=filter_name, color=color,
+                               catalog=self.catalog, **kwargs)
         self.append_layer(new_layer)
 
     def append_layer(self, new_layer):
