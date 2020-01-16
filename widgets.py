@@ -1,3 +1,4 @@
+import os
 import copy
 from catalog import Catalog
 from image import Image, ImageLayer
@@ -7,7 +8,7 @@ import matplotlib.pyplot as plt
 from IPython.display import display, clear_output
 
 
-catalog = Catalog("images/catalog.yml")
+catalog = Catalog(os.path.join("data", "catalog.yml"))
 skip_layer_plot = False
 
 
@@ -28,19 +29,27 @@ def get_layer_widget(layer, plot_function=None):
 def get_image_widget():
     w_out = widgets.Output(layout=widgets.Layout(width='50%'))
     w_layers = widgets.Accordion()
-    def wrapper(object_name, figwidth=10, fullres=False):
+    fullres_box = widgets.Checkbox(
+        value=False, description='Display full resolution (slow)')
+    figwidth_box = widgets.BoundedFloatText(
+        value=10, min=1, max=1000,
+        description='Width (cm)')
+    def wrapper(object_name):
         if object_name.startswith('*'):
             print('Downloading fits files, this may take a few minutes.')
             object_name = object_name.strip('*')
         obj = Image(object_name, catalog=catalog)
         obj.widget_setup_complete = False
-        def plot_function():
+        def plot_function(change=None):
             if not obj.widget_setup_complete:
                 return
             w_out.clear_output()
             with w_out:
-                obj.plot(fullres=fullres,
-                         figsize=(figwidth, figwidth))
+                obj.plot(fullres=fullres_box.value,
+                         figsize=(figwidth_box.value,
+                                  figwidth_box.value))
+        fullres_box.observe(plot_function, names='value')
+        figwidth_box.observe(plot_function, names='value')
         w_clr = []
         extra_colors = ['magenta', 'cyan', 'yellow', 'orange',
                         'purple', 'pink', 'turquoise', 'lavender']
@@ -64,12 +73,9 @@ def get_image_widget():
     w = interactive(wrapper,
                     object_name=widgets.Dropdown(
                         options=object_list, value='kepler',
-                        description='Object', disabled=False),
-                    figwidth=widgets.BoundedFloatText(
-                        value=10, min=1, max=15,
-                        description='Width (cm)'),
-                    fullres=widgets.Checkbox(value=False, description='Display full resolution (slow)'))
-    w_control = widgets.VBox([w, w_layers], layout=widgets.Layout(width='50%'))
+                        description='Object', disabled=False))
+    w_control = widgets.VBox([w, figwidth_box, fullres_box, w_layers],
+                             layout=widgets.Layout(width='50%'))
     w_all = widgets.HBox([w_control, w_out])
     return w_all
 

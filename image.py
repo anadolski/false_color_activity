@@ -109,7 +109,7 @@ class ImageLayer(object):
 class Image(object):
     def __init__(self, object_name, catalog=None):
         if catalog is None:
-            catalog = Catalog("images/catalog.yml")
+            catalog = Catalog(os.path.join("data", "catalog.yml"))
         self.object = object_name
         self.layers = []
         self.default_colors = ['red', 'green', 'blue']

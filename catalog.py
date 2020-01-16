@@ -28,16 +28,16 @@ class Catalog(object):
             else:
                 if self.yaml[object_name][band].startswith('https://chandra.harvard.edu'):
                     fname_url = self.yaml[object_name][band]
-                    object_dir = os.path.join('images', object_name)
+                    object_dir = os.path.join('data', object_name)
                     if not os.path.isdir(object_dir):
                         os.mkdir(object_dir)
                     fname = os.path.join(object_dir,
-                                         os.path.basename(fname_url))
+                                         fname_url.rsplit('/', 1)[-1])
                     if not os.path.isfile(fname):
                         urllib.request.urlretrieve(fname_url, fname)
                     assert(os.path.isfile(fname))
                 else:
-                    fname = os.path.join('images', object_name, self.yaml[object_name][band])
+                    fname = os.path.join('data', object_name, self.yaml[object_name][band])
         if fname not in self.cache:
             image_file = get_pkg_data_filename(fname)
             # fits.info(image_file)
