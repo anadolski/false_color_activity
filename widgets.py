@@ -29,6 +29,9 @@ def get_image_widget():
     w_out = widgets.Output(layout=widgets.Layout(width='50%'))
     w_layers = widgets.Accordion()
     def wrapper(object_name, figwidth=10, fullres=False):
+        if object_name.startswith('*'):
+            print('Downloading fits files, this may take a few minutes.')
+            object_name = object_name.strip('*')
         obj = Image(object_name, catalog=catalog)
         obj.widget_setup_complete = False
         def plot_function():
@@ -39,7 +42,8 @@ def get_image_widget():
                 obj.plot(fullres=fullres,
                          figsize=(figwidth, figwidth))
         w_clr = []
-        extra_colors = ['magenta', 'cyan', 'yellow']
+        extra_colors = ['magenta', 'cyan', 'yellow', 'orange',
+                        'purple', 'pink', 'turquoise', 'lavender']
         if 'optical_red' not in obj.bands:
             extra_colors = obj.default_colors + extra_colors
         for band in obj.bands:
@@ -56,9 +60,10 @@ def get_image_widget():
             w_layers.set_title(i, band)
         obj.widget_setup_complete = True
         plot_function()
+    object_list = catalog.local_objects + ['*' + x for x in catalog.remote_objects]
     w = interactive(wrapper,
                     object_name=widgets.Dropdown(
-                        options=catalog.objects, value=catalog.objects[0],
+                        options=object_list, value='kepler',
                         description='Object', disabled=False),
                     figwidth=widgets.BoundedFloatText(
                         value=10, min=1, max=15,
